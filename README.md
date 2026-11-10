@@ -132,7 +132,7 @@ The full payload also has `recommended_box` and `evaluations`. `evaluations` lis
 .\.venv\Scripts\python.exe manage.py test --verbosity 2
 ```
 
-The output of that command is in [TEST_OUTPUT.md](TEST_OUTPUT.md). The same command runs in GitHub Actions (`.github/workflows/tests.yml`).
+The case list is in [TEST_CASES.md](TEST_CASES.md). The output of that command is in [TEST_OUTPUT.md](TEST_OUTPUT.md). The same command runs in GitHub Actions (`.github/workflows/tests.yml`).
 
 The tests cover rotation, touching faces, volume that still cannot be packed, the greedy dead end, cost and size tie-breaks, weight at the exact limit, inactive boxes, the demo orders above, the form, and the JSON API.
 
