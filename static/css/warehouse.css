@@ -1,0 +1,180 @@
+:root {
+  color-scheme: light;
+  --ink: #1c1915;
+  --muted: #5c564c;
+  --paper: #f4f1ea;
+  --card: #fffdf8;
+  --line: #ddd6c8;
+  --green: #0f6e56;
+  --green-soft: #e5f4ee;
+  --brown: #8a3b12;
+  --amber: #8a5a00;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 16px/1.45 "Segoe UI", sans-serif;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: #243028;
+  color: #f4f1ea;
+}
+
+.top a {
+  color: inherit;
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+main {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 1.25rem;
+}
+
+h1, h2, h3 {
+  line-height: 1.2;
+}
+
+.intro p,
+.note {
+  color: var(--muted);
+  max-width: 42rem;
+}
+
+section {
+  margin-bottom: 2rem;
+}
+
+.banner {
+  padding: 0.75rem 1rem;
+  background: #f8e8df;
+  border: 1px solid #e2c2b2;
+}
+
+.banner ul {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.result {
+  background: var(--card);
+  border: 1px solid var(--line);
+  padding: 1rem;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--card);
+}
+
+th, td {
+  text-align: left;
+  padding: 0.55rem 0.65rem;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+
+th {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+tr.is-recommended {
+  background: var(--green-soft);
+}
+
+.status-fit {
+  color: var(--green);
+  font-weight: 600;
+}
+
+.status-inconclusive {
+  color: var(--amber);
+  font-weight: 600;
+}
+
+.status-too_heavy,
+.status-item_too_large,
+.status-volume_exceeded,
+.status-cannot_pack {
+  color: var(--brown);
+  font-weight: 600;
+}
+
+input[type="number"] {
+  width: 5rem;
+  min-height: 2.25rem;
+  padding: 0.25rem 0.4rem;
+  border: 1px solid var(--line);
+  background: white;
+  font: inherit;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+button {
+  min-height: 2.5rem;
+  padding: 0.4rem 1rem;
+  border: 0;
+  background: var(--green);
+  color: white;
+  font: inherit;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #0c5b48;
+}
+
+.orders {
+  padding-left: 1.2rem;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+@media (max-width: 640px) {
+  main {
+    padding: 0.75rem;
+  }
+
+  .top {
+    align-items: flex-start;
+  }
+}

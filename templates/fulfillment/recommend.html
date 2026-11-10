@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+
+{% block title %}Recommend a box{% endblock %}
+
+{% block content %}
+  <section class="intro">
+    <h1>Which box should this order use?</h1>
+    <p>
+      The cheapest box that can hold every item wins. Items can be turned in
+      90 degree steps. If two boxes cost the same, the smaller one is used.
+    </p>
+  </section>
+
+  {% if errors %}
+    <div class="banner error" role="alert">
+      <ul>
+        {% for error in errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  {% if selection %}
+    <section class="result" aria-live="polite">
+      <h2>{{ selection.summary }}</h2>
+      <p>
+        Order weight {{ selection.total_weight_kg }} kg.
+        Item volume {{ selection.total_volume_cm3 }} cm³.
+      </p>
+      {% if saved_order %}
+        <p>Saved as order #{{ saved_order.id }}.</p>
+      {% endif %}
+
+      {% if selection.recommended %}
+        <h3>Placement inside {{ selection.recommended.box.name }}</h3>
+        <p class="note">
+          X runs along the box length, Y along the width, and Z along the
+          height, measured from one inner corner. Sizes below are the
+          orientation used for that item.
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>X cm</th>
+                <th>Y cm</th>
+                <th>Z cm</th>
+                <th>Length</th>
+                <th>Width</th>
+                <th>Height</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for placement in selection.recommended.placements %}
+                <tr>
+                  <td>{{ placement.label }}</td>
+                  <td>{{ placement.x_cm }}</td>
+                  <td>{{ placement.y_cm }}</td>
+                  <td>{{ placement.z_cm }}</td>
+                  <td>{{ placement.length_cm }}</td>
+                  <td>{{ placement.width_cm }}</td>
+                  <td>{{ placement.height_cm }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% endif %}
+
+      <h3>Every active box</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Box</th>
+              <th>Cost</th>
+              <th>Result</th>
+              <th>Why</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for evaluation in selection.evaluations %}
+              <tr class="{% if selection.recommended and evaluation.box.id == selection.recommended.box.id %}is-recommended{% endif %}">
+                <td>{{ evaluation.box.name }}</td>
+                <td>{{ evaluation.box.cost }}</td>
+                <td class="status-{{ evaluation.status }}">{{ evaluation.status_label }}</td>
+                <td>{{ evaluation.detail }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  {% endif %}
+
+  <section>
+    <h2>Order</h2>
+    {% if products %}
+      <form method="post">
+        {% csrf_token %}
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>SKU</th>
+                <th>Product</th>
+                <th>Size cm</th>
+                <th>Weight kg</th>
+                <th>Quantity</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for product in products %}
+                <tr>
+                  <td>{{ product.sku }}</td>
+                  <td>{{ product.name }}</td>
+                  <td>{{ product.length_cm }} × {{ product.width_cm }} × {{ product.height_cm }}</td>
+                  <td>{{ product.weight_kg }}</td>
+                  <td>
+                    <label class="sr-only" for="qty-{{ product.id }}">Quantity for {{ product.name }}</label>
+                    <input
+                      id="qty-{{ product.id }}"
+                      name="qty_{{ product.id }}"
+                      type="number"
+                      min="0"
+                      max="30"
+                      step="1"
+                      inputmode="numeric"
+                      value="{{ product.posted_quantity }}"
+                    >
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <label class="check">
+          <input type="checkbox" name="save_order" {% if save_checked %}checked{% endif %}>
+          Save this result as an order
+        </label>
+        <button type="submit">Recommend box</button>
+      </form>
+    {% else %}
+      <p>No products are in the catalog. Run <code>python manage.py seed_demo</code> and refresh.</p>
+    {% endif %}
+  </section>
+
+  <section>
+    <h2>Active boxes</h2>
+    {% if boxes %}
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Internal size cm</th>
+              <th>Max weight kg</th>
+              <th>Cost</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for box in boxes %}
+              <tr>
+                <td>{{ box.name }}</td>
+                <td>{{ box.length_cm }} × {{ box.width_cm }} × {{ box.height_cm }}</td>
+                <td>{{ box.max_weight_kg }}</td>
+                <td>{{ box.cost }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p>No active boxes are configured.</p>
+    {% endif %}
+  </section>
+
+  <section>
+    <h2>Recent orders</h2>
+    {% if recent_orders %}
+      <ul class="orders">
+        {% for order in recent_orders %}
+          <li>
+            <strong>#{{ order.id }}</strong>
+            {{ order.created_at|date:"Y-m-d H:i" }}
+            {% if order.recommended_box %}
+              {{ order.recommended_box.name }}
+            {% else %}
+              No box
+            {% endif %}
+            ({{ order.total_weight_kg }} kg)
+            —
+            {% for line in order.lines.all %}
+              {{ line.product.sku }}×{{ line.quantity }}{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No orders yet.</p>
+    {% endif %}
+  </section>
+{% endblock %}
